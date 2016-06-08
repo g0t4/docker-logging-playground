@@ -29,13 +29,13 @@ services:
             LOGSPOUT: ignore # not really helpful to see what you're doing in kibana
         ports:
             - 5601:5601 
-        #    cadvisor: # Cadvisor for container metrics monitoring FE
-        #image: google/cadvisor 
-        #volumes:
-        #    - /:/rootfs:ro
-        #    - /var/run:/var/run:rw
-        #    - /sys:/sys:ro
-        #     - /var/lib/docker/:/var/lib/docker:ro
-        #ports:
-        #    - 8080:8080
+    cadvisor: # Cadvisor for container metrics monitoring FE
+        image: google/cadvisor 
+        volumes:
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+        ports:
+            - 8080:8080
 
