@@ -1,0 +1,41 @@
+version: '2'
+
+# Based on:
+# http://nathanleclaire.com/blog/2015/04/27/automating-docker-logging-elasticsearch-logstash-kibana-and-logspout/ 
+
+services:
+    elasticsearch: # ElasticSearch indexes and affords querying of data in documents
+        image: elasticsearch
+        ports:
+            - 9200:9200 # not needed, but you can access elasticsearch api
+    logstash: # logstash exposes a syslog endpoing to write logs to
+        image: logstash
+        environment:
+            LOGSPOUT: ignore # without this, an infinite loop (spout -> stash -> spout ...)
+        volumes:
+            - ./logstash.conf:/etc/logstash.conf
+        command: -f /etc/logstash.conf
+    logspout: # route container logs automatically to logstash
+        image: gliderlabs/logspout
+        environment:
+            DEBUG: "true"
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+        command: syslog://logstash:5000
+    kibana: # front end for interacting with collected logs
+        image: kibana
+        environment:
+            ELASTICSEARCH_URL: http://elasticsearch:9200
+            LOGSPOUT: ignore # not really helpful to see what you're doing in kibana
+        ports:
+            - 5601:5601 
+        #    cadvisor: # Cadvisor for container metrics monitoring FE
+        #image: google/cadvisor 
+        #volumes:
+        #    - /:/rootfs:ro
+        #    - /var/run:/var/run:rw
+        #    - /sys:/sys:ro
+        #     - /var/lib/docker/:/var/lib/docker:ro
+        #ports:
+        #    - 8080:8080
+
