@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+    redis:
+        image: redis
+    postgres:
+        image: postgres
+        environment:
+            POSTGRES_PASSWORD: sentry
+            POSTGRES_USER: sentry
+            POSTGRES_DB: sentry
+    sentry:
+        image: sentry
+        environment:
+            SENTRY_POSTGRES_HOST: postgres
+            SENTRY_DB_NAME: sentry
+            SENTRY_DB_USER: sentry
+            SENTRY_DB_PASSWORD: sentry
+            SENTRY_REDIS_HOST: redis
+            SENTRY_SECRET_KEY: supersecret
+        ports:
+            - 9000:9000
+
